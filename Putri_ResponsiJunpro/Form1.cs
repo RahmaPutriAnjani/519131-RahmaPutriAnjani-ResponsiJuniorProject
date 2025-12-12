@@ -33,7 +33,7 @@ namespace Putri_ResponsiJunpro
                 //Test Connection
                 conn.Open();
                 MessageBox.Show("Connection to PostgreSQL is successful!", "Connection Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                conn.Close;
+                conn.Close();
             }
             catch (Exception ex)
             {
@@ -44,6 +44,37 @@ namespace Putri_ResponsiJunpro
         private void EstablishConn()
         {
             MessageBox.Show("Connection to PostgreSQL is success", "Initializing", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            EstablishConn();
+            EstablishConn(connString);
+            LoadData();
+        }
+
+        private void LoadData()
+        { 
+            try
+            {
+                using(var conn = new NpgsqlConnection(connString))
+                {
+                    conn.Open();
+                    sql = "SELECT * FORM dev_select()";
+                    using (var cmd = new NpgsqlCommand(sql, conn))
+                    using (var adapter = new NpgsqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+                        dataGridView1.DataSource = dt;
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
